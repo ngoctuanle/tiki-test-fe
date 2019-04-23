@@ -1,17 +1,15 @@
-import {TKTESTBoolValue, TKTESTStringValue} from "./TKTESTValidation";
+import {TKTESTStringValue} from "./TKTESTValidation";
 import CardViewModel from "./CardViewModel";
+import DeckViewModel from "./DeckViewModel";
 
-class DrawDeckViewModel {
-    deck_id: string = '';
-    success: boolean = true;
+class DrawDeckViewModel extends DeckViewModel {
     cards: CardViewModel[] = [];
-    remaining: number;
+    error: string;
 
     constructor(id, data) {
-        this.deck_id = TKTESTStringValue(id);
-        this.success = TKTESTBoolValue(data.success);
+        super(id, data);
         this.cards = (data.cards || []).map(card => new CardViewModel(card));
-        this.remaining = TKTESTBoolValue(data.remaining);
+        this.error = TKTESTStringValue(data.error);
     }
 }
 

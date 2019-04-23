@@ -1,13 +1,9 @@
 import { combineReducers } from 'redux';
-import GetDeckReducer from './GetDeckReducer';
-import ShuffleDeckReducer from './ShuffleDeckReducer';
-import DrawDeckReducer from './DrawDeckReducer';
+import DeckReducer from './DeckReducer';
 import GameReducer from './GameReducer';
 
 const rootReducer = combineReducers({
-    GetDeckReducer,
-    ShuffleDeckReducer,
-    DrawDeckReducer,
+    DeckReducer,
     GameReducer
 });
 
