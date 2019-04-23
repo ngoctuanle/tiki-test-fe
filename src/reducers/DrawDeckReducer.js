@@ -1,18 +1,18 @@
-import { GET_NEW_DECK_REQUEST, GET_NEW_DECK_SUCCESS, REQUEST_FAIL } from '../constants';
+import { DRAW_DECK_REQUEST, DRAW_DECK_SUCCESS, REQUEST_FAIL } from '../constants';
 
 const initialState = {
     deck: {},
     waiting: true
 };
 
-const GetDeckReducer = (state = initialState, action) => {
+const DrawDeckReducer = (state = initialState, action) => {
     switch (action.type) {
-        case GET_NEW_DECK_REQUEST:
+        case DRAW_DECK_REQUEST:
             return {
-              ...state,
-              waiting: true
+                ...state,
+                waiting: true
             };
-        case GET_NEW_DECK_SUCCESS:
+        case DRAW_DECK_SUCCESS:
             return  {
                 ...state,
                 deck: action.deck,
@@ -28,4 +28,4 @@ const GetDeckReducer = (state = initialState, action) => {
     }
 };
 
-export default GetDeckReducer;
+export default DrawDeckReducer;
