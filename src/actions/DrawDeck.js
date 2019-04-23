@@ -1,4 +1,4 @@
-import { DRAW_DECK_REQUEST, DRAW_DECK_SUCESS } from '../constants/Actions';
+import { DRAW_DECK_REQUEST, DRAW_DECK_SUCCESS } from '../constants/Actions';
 
 export const drawDeckRequest = (payload) => ({
     type: DRAW_DECK_REQUEST,
@@ -6,5 +6,5 @@ export const drawDeckRequest = (payload) => ({
 });
 
 export const drawDeckSuccess = (payload) => ({
-    type: DRAW_DECK_SUCESS
+    type: DRAW_DECK_SUCCESS
 });
