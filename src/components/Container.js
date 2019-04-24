@@ -1,10 +1,13 @@
 import React from 'react';
+import TopSection from "./TopSection";
+import GameSection from "./GameSection";
 
 class Container extends React.Component {
-    render(): React.ReactElement<any> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
+    render() {
         return (
             <div>
-
+                <TopSection />
+                <GameSection />
             </div>
         )
     }
