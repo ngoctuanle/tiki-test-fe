@@ -10,7 +10,8 @@ import {
 
 const initialState = {
     deck: {},
-    waiting: true
+    waiting: true,
+    waiting_cards: false
 };
 
 const DeckReducer = (state = initialState, action) => {
@@ -29,23 +30,24 @@ const DeckReducer = (state = initialState, action) => {
         case SHUFFLE_DECK_REQUEST:
             return {
                 ...state,
-                waiting: true
+                waiting_cards: true
             };
         case SHUFFLE_DECK_SUCCESS:
             return  {
                 ...state,
-                waiting: false
+                deck: action.payload.deck,
+                waiting_cards: false
             };
         case DRAW_DECK_REQUEST:
             return {
                 ...state,
-                waiting: true
+                waiting_cards: true
             };
         case DRAW_DECK_SUCCESS:
             return  {
                 ...state,
                 deck: action.payload.deck,
-                waiting: false
+                waiting_cards: false
             };
         case REQUEST_FAIL:
             return {

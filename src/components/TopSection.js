@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button } from '@material-ui/core';
+import {Button, CircularProgress} from '@material-ui/core';
 import _ from 'lodash';
 import {
     shuffleDeckRequest,
@@ -46,7 +46,7 @@ class TopSection extends React.Component {
         this.props.dispatch(drawDeckRequest({}));
         const drawPromises = [];
         for(let i = 0; i < PLAYERS_NUM; i++) {
-            drawPromises.push(drawDeck(deck.deck_id));
+            drawPromises.push(drawDeck(deck.deck_id).then(res => { return res }));
         }
         Promise.all(drawPromises).then(response => {
             response.forEach((deck, index) => {
@@ -129,24 +129,24 @@ class TopSection extends React.Component {
     }
 
     render(){
-        const { players_score, round_no , revealed } = this.props;
+        const { players_score, round_no , revealed, waiting_cards } = this.props;
 
         return (
             <div>
                 <div className='top-section-container'>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onShuffle} disabled={revealed}>
-                            Shuffle
+                        <Button variant="contained" color="primary" onClick={this.onShuffle} disabled={revealed || waiting_cards}>
+                            Shuffle {waiting_cards && <CircularProgress />}
                         </Button>
                     </div>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onDraw} disabled={revealed}>
-                            Draw
+                        <Button variant="contained" color="primary" onClick={this.onDraw} disabled={revealed || waiting_cards}>
+                            Draw {waiting_cards && <CircularProgress />}
                         </Button>
                     </div>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onReveal} disabled={revealed}>
-                            Reveal
+                        <Button variant="contained" color="primary" onClick={this.onReveal} disabled={revealed || waiting_cards}>
+                            Reveal {waiting_cards && <CircularProgress />}
                         </Button>
                     </div>
                     <div className='top-section-score-broad'>
@@ -167,7 +167,8 @@ const mapStateToProps = (state) => ({
     players_deck: state.GameReducer.players_deck,
     round_no: state.GameReducer.round_no,
     revealed: state.GameReducer.revealed,
-    deck: state.DeckReducer.deck
+    deck: state.DeckReducer.deck,
+    waiting_cards: state.DeckReducer.waiting_cards
 });
 
 export default connect(mapStateToProps)(TopSection);

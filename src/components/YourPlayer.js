@@ -10,29 +10,31 @@ class YourPlayer extends React.Component{
     };
 
     render() {
-        const { player_no, players_deck, revealed } = this.props;
-
+        const { player_no, players_deck, revealed, waiting_cards } = this.props;
         return (
             <div className='game-section-player'>
                 <Person style={{ fontSize: 70 }}/>
                 <br/>
-                <div className='game-section-deck'>
-                    {((players_deck[player_no] || {}).cards || []).map((card: CardViewModel) => {
-                        return (
-                            <div className='game-section-deck-card' key={card.image}>
-                                <img
-                                    alt={''}
-                                    key={card.image}
-                                    src={card.images.png}
-                                    style={{
-                                        width: '100%',
-                                        visibility: revealed ? null : 'hidden'
-                                    }}
-                                />
-                            </div>
-                        )
-                    })}
-                </div>
+                {waiting_cards
+                    ? null
+                    : <div className='game-section-deck'>
+                        {((players_deck[player_no] || {}).cards || []).map((card: CardViewModel) => {
+                            return (
+                                <div className='game-section-deck-card' key={card.image}>
+                                    <img
+                                        alt={''}
+                                        key={card.image}
+                                        src={card.images.png}
+                                        style={{
+                                            width: '100%',
+                                            visibility: revealed ? null : 'hidden'
+                                        }}
+                                    />
+                                </div>
+                            )
+                        })}
+                    </div>
+                }
             </div>
         );
     }
@@ -41,7 +43,8 @@ class YourPlayer extends React.Component{
 const mapStateToProps = (state) => {
     return {
         players_deck: state.GameReducer.players_deck,
-        revealed: state.GameReducer.revealed
+        revealed: state.GameReducer.revealed,
+        waiting_cards: state.DeckReducer.waiting_cards
     }
 };
 
