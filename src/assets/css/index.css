@@ -45,5 +45,8 @@ code {
 }
 
 .game-section-deck-card {
-  width: 33%
+  width: 33%;
+  background: cadetblue;
+  border-radius: 5px;
+  margin: 2px;
 }

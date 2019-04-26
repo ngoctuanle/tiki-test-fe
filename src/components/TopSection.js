@@ -1,27 +1,38 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button } from '@material-ui/core';
+import _ from 'lodash';
 import {
     shuffleDeckRequest,
     shuffleDeckSuccess,
     requestFail,
     drawDeckRequest,
     drawDeckSuccess,
-    gameSetDeck
+    gameSetDeck,
+    revealCard, gameResetRound, gameSetScore
 } from "../actions";
 import {shuffleDeck, drawDeck} from "../services/DeckServices";
 import DeckViewModel from "../models/DeckViewModel";
-import {PLAYERS_NUM} from "../constants";
+import {BET_SCORE, PLAYERS_NUM} from "../constants";
+import CardViewModel from "../models/CardViewModel";
 
 class TopSection extends React.Component {
-    onShuffle = (e) => {
-        e.preventDefault();
+    constructor(props) {
+        super(props);
+        this.normal = true;
+    }
+
+    onShuffle = () => {
         const deck: DeckViewModel = this.props.deck;
 
         this.props.dispatch(shuffleDeckRequest({}));
         shuffleDeck(deck.deck_id)
             .then(res => {
                 this.props.dispatch(shuffleDeckSuccess({deck: res}));
+                if (!this.normal) {
+                    this.normal = true;
+                    this.onDraw();
+                }
             })
             .catch(e => {
                 console.log(e);
@@ -29,8 +40,7 @@ class TopSection extends React.Component {
             })
     };
 
-    onDraw = (e) => {
-        e.preventDefault();
+    onDraw = () => {
         const deck: DeckViewModel = this.props.deck;
 
         this.props.dispatch(drawDeckRequest({}));
@@ -42,32 +52,100 @@ class TopSection extends React.Component {
             response.forEach((deck, index) => {
                this.props.dispatch(gameSetDeck({deck: deck, player_no: `${index + 1}`}))
             });
-            this.props.dispatch(drawDeckSuccess({deck: deck}));
+            this.props.dispatch(drawDeckSuccess({deck: response[response.length - 1]}));
         })
     };
 
-    onReveal = (e) => {
-        e.preventDefault();
+    onReveal = () => {
+        const { players_deck } = this.props;
+        if (Object.keys(players_deck).length > 0) {
+            const playerScores = {};
+            Object.keys(players_deck).forEach(playerNo => {
+               const playerCards = players_deck[playerNo].cards;
+               playerScores[playerNo] = {
+                   jqk: _.sumBy(playerCards, (card: CardViewModel) => this.checkJQK(card.value)),
+                   value: this.getPoint(_.sumBy(playerCards, (card: CardViewModel) => this.convertValue(card.value)))
+               }
+            });
+
+            const playerWins = [];
+            const maxValue = _.max(_.map(playerScores, item => item.value));
+            Object.keys(playerScores).forEach(playerId => {
+               const playerScore = playerScores[playerId];
+               if (playerScore.jqk === 3) playerWins.push(playerId);
+               if (playerScore.value === maxValue && playerScore.jqk !== 3) playerWins.push(playerId);
+            });
+
+            const plusPoint = (PLAYERS_NUM * BET_SCORE) / (playerWins.length);
+            playerWins.forEach(player_no => {
+                this.props.dispatch(gameSetScore({player_no, score: Math.round(plusPoint)}))
+            });
+
+            this.props.dispatch(revealCard({players_win: playerWins}));
+        } else {
+            alert('Please Draw Card First!')
+        }
     };
 
+    getPoint = (value) => {
+        return Number(`${value}`[`${value}`.length - 1]);
+    };
+
+    checkJQK = (value) => {
+        switch (value) {
+            case "JACK":
+            case "QUEEN":
+            case "KING":
+                return 1;
+            default:
+                return 0;
+        }
+    };
+
+    convertValue = (value) => {
+        switch (value) {
+            case "ACE":
+                return 1;
+            case "JACK":
+            case "QUEEN":
+            case "KING":
+                return 10;
+            default:
+                return Number(value);
+        }
+    };
+
+    componentWillUpdate(nextProps, nextState, nextContext) {
+        const { deck } = this.props;
+        if (deck && deck.error && this.normal) {
+            this.normal = false;
+            const c = window.confirm(`${deck.error}. Do you want to shuffle card? Cancel to new game.`);
+            if (c) {
+                this.onShuffle()
+            } else {
+                this.props.dispatch(gameResetRound({}));
+            }
+        }
+    }
+
     render(){
-        const { players_score, round_no, deck } = this.props;
-        console.log(deck);
+        const { players_score, round_no , revealed } = this.props;
+
         return (
             <div>
                 <div className='top-section-container'>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onShuffle} >
+                        <Button variant="contained" color="primary" onClick={this.onShuffle} disabled={revealed}>
                             Shuffle
                         </Button>
                     </div>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onDraw} >
+                        <Button variant="contained" color="primary" onClick={this.onDraw} disabled={revealed}>
                             Draw
                         </Button>
                     </div>
                     <div className='top-section-button'>
-                        <Button variant="contained" color="primary" onClick={this.onReveal}>
+                        <Button variant="contained" color="primary" onClick={this.onReveal} disabled={revealed}>
                             Reveal
                         </Button>
                     </div>
@@ -86,7 +164,9 @@ class TopSection extends React.Component {
 
 const mapStateToProps = (state) => ({
     players_score: state.GameReducer.players_score,
+    players_deck: state.GameReducer.players_deck,
     round_no: state.GameReducer.round_no,
+    revealed: state.GameReducer.revealed,
     deck: state.DeckReducer.deck
 });
 

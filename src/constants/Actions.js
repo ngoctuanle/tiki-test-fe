@@ -13,4 +13,6 @@ export const GAME_RESET_ROUND = 'GAME_RESET_ROUND';
 export const GAME_SET_SCORE = 'GAME_SET_SCORE';
 export const GAME_SET_DECK = 'GAME_SET_DECK';
 
+export const GAME_REVEAL_CARD = 'GAME_REVEAL_CARD';
+
 export const REQUEST_FAIL = 'REQUEST_FAIL';

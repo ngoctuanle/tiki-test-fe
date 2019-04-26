@@ -4,9 +4,14 @@ import {Grid} from '@material-ui/core';
 import TopSection from "./TopSection";
 import GameSection from "./GameSection";
 import Splash from "./Splash";
-import {getDeckRequest, getDeckSuccess, requestFail} from "../actions";
+import {
+    getDeckRequest,
+    getDeckSuccess,
+    requestFail,
+} from "../actions";
 import {getNewDeck} from "../services/DeckServices";
 import DeckViewModel from "../models/DeckViewModel";
+import AlertSection from "./AlertSection";
 
 class Container extends React.Component {
     componentDidMount() {
@@ -42,6 +47,8 @@ class Container extends React.Component {
                     >
                         <TopSection/>
                         <br/>
+                        {this.props.revealed && <AlertSection />}
+                        <br/>
                         <GameSection/>
                     </Grid>
                 </Grid>
@@ -53,7 +60,9 @@ class Container extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        waiting: state.DeckReducer.waiting
+        deck: state.DeckReducer.deck,
+        waiting: state.DeckReducer.waiting,
+        revealed: state.GameReducer.revealed
     }
 };
 
