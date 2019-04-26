@@ -11,5 +11,6 @@ export const GAME_NEXT_ROUND = 'GAME_NEXT_ROUND';
 export const GAME_RESET_ROUND = 'GAME_RESET_ROUND';
 
 export const GAME_SET_SCORE = 'GAME_SET_SCORE';
+export const GAME_SET_DECK = 'GAME_SET_DECK';
 
 export const REQUEST_FAIL = 'REQUEST_FAIL';

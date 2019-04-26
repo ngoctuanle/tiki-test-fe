@@ -34,3 +34,16 @@ code {
   border-color: #c2c2c2;
   border-radius: 10px;
 }
+
+.game-section-player {
+  text-align: center;
+}
+
+.game-section-deck {
+  display: flex;
+  flex-direction: row;
+}
+
+.game-section-deck-card {
+  width: 33%
+}

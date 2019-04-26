@@ -23,7 +23,7 @@ const DeckReducer = (state = initialState, action) => {
         case GET_NEW_DECK_SUCCESS:
             return  {
                 ...state,
-                deck: action.deck,
+                deck: action.payload.deck,
                 waiting: false
             };
         case SHUFFLE_DECK_REQUEST:
@@ -34,7 +34,6 @@ const DeckReducer = (state = initialState, action) => {
         case SHUFFLE_DECK_SUCCESS:
             return  {
                 ...state,
-                deck: action.deck,
                 waiting: false
             };
         case DRAW_DECK_REQUEST:
@@ -45,7 +44,7 @@ const DeckReducer = (state = initialState, action) => {
         case DRAW_DECK_SUCCESS:
             return  {
                 ...state,
-                deck: action.deck,
+                deck: action.payload.deck,
                 waiting: false
             };
         case REQUEST_FAIL:

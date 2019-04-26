@@ -1,10 +1,31 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import {connect} from 'react-redux';
+import {Grid} from '@material-ui/core';
 import TopSection from "./TopSection";
 import GameSection from "./GameSection";
+import Splash from "./Splash";
+import {getDeckRequest, getDeckSuccess, requestFail} from "../actions";
+import {getNewDeck} from "../services/DeckServices";
+import DeckViewModel from "../models/DeckViewModel";
 
 class Container extends React.Component {
+    componentDidMount() {
+        this.props.dispatch(getDeckRequest({}));
+        getNewDeck()
+            .then((res: DeckViewModel) => {
+                this.props.dispatch(getDeckSuccess({deck: res}));
+            })
+            .catch(e => {
+                console.log(e);
+                this.props.dispatch(requestFail(e))
+            })
+    }
+
     render() {
+        if (this.props.waiting) {
+            return <Splash/>
+        }
+
         return (
             <Grid
                 container
@@ -19,8 +40,9 @@ class Container extends React.Component {
                         direction='column'
                         justify='center'
                     >
-                        <TopSection />
-                        <GameSection />
+                        <TopSection/>
+                        <br/>
+                        <GameSection/>
                     </Grid>
                 </Grid>
             </Grid>
@@ -29,4 +51,10 @@ class Container extends React.Component {
     }
 }
 
-export default Container;
+const mapStateToProps = (state) => {
+    return {
+        waiting: state.DeckReducer.waiting
+    }
+};
+
+export default connect(mapStateToProps)(Container);

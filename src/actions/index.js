@@ -1,4 +1,3 @@
+export * from './Deck';
+export * from './Game';
 export * from './Common';
-export * from './GetDeck';
-export * from './ShuffleDeck';
-export * from './DrawDeck';
